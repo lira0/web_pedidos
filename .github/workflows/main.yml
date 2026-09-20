@@ -1,0 +1,76 @@
+name: Descompactar site
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extrair:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Localizar ZIP
+        shell: bash
+        run: |
+          set -e
+
+          ZIP="$(find . -maxdepth 1 -type f -name '*.zip' | head -n 1)"
+
+          if [ -z "$ZIP" ]; then
+            echo "Nenhum ZIP encontrado na raiz."
+            exit 1
+          fi
+
+          echo "ZIP encontrado: $ZIP"
+
+          mkdir -p /tmp/agua_delivery
+          unzip -o "$ZIP" -d /tmp/agua_delivery
+
+          echo "Conteúdo extraído:"
+          find /tmp/agua_delivery -maxdepth 3 -type f
+
+      - name: Copiar conteúdo para a raiz
+        shell: bash
+        run: |
+          set -e
+
+          ROOT="/tmp/agua_delivery"
+
+          # Se o ZIP tiver uma única pasta envolvendo tudo,
+          # entra automaticamente nela.
+          DIR_COUNT="$(find "$ROOT" -mindepth 1 -maxdepth 1 -type d | wc -l)"
+          FILE_COUNT="$(find "$ROOT" -mindepth 1 -maxdepth 1 -type f | wc -l)"
+
+          if [ "$DIR_COUNT" -eq 1 ] && [ "$FILE_COUNT" -eq 0 ]; then
+            SOURCE="$(find "$ROOT" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+          else
+            SOURCE="$ROOT"
+          fi
+
+          cp -a "$SOURCE"/. .
+
+      - name: Remover ZIP original
+        shell: bash
+        run: |
+          find . -maxdepth 1 -type f -name '*.zip' -delete
+
+      - name: Salvar arquivos no repositório
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração encontrada."
+            exit 0
+          fi
+
+          git commit -m "Descompactar site Água Delivery"
+          git push
