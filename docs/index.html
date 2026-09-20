@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0878df">
+  <meta name="description" content="Peça sua água de forma rápida e acompanhe a entrega.">
+  <title>Águas de Maria — Peça sua água</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-drop" aria-hidden="true">💧</span>
+        <div><strong id="storeName">ÁGUAS DE MARIA</strong><small>Peça sua água sem complicação</small></div>
+      </div>
+      <div class="secure-chip">Pedido online</div>
+    </header>
+
+    <section class="steps" aria-label="Etapas do pedido">
+      <div class="step active" data-step-dot="1"><span>1</span><small>Produtos</small></div>
+      <i></i><div class="step" data-step-dot="2"><span>2</span><small>Entrega</small></div>
+      <i></i><div class="step" data-step-dot="3"><span>3</span><small>Pagamento</small></div>
+      <i></i><div class="step" data-step-dot="4"><span>4</span><small>Confirmação</small></div>
+    </section>
+
+    <div id="connectionBanner" class="connection-banner demo">Modo demonstração — conecte o Supabase quando quiser.</div>
+
+    <section class="screen active" data-screen="1">
+      <div class="hero">
+        <div><p class="eyebrow">ENTREGA RÁPIDA</p><h1>Água de qualidade na sua casa.</h1><p>Escolha seus produtos e faça seu pedido em poucos passos.</p></div>
+        <div class="hero-drop">💧</div>
+      </div>
+      <div class="section-title"><div><h2>Nossos produtos</h2><p>Selecione a quantidade desejada.</p></div></div>
+      <div id="products" class="product-list"><div class="loading">Carregando produtos…</div></div>
+      <div class="bottom-bar"><div><small id="cartCount">0 itens</small><strong id="cartTotal">R$ 0,00</strong></div><button id="goDelivery" class="primary" disabled>Continuar</button></div>
+    </section>
+
+    <section class="screen" data-screen="2">
+      <div class="section-heading"><button class="icon-btn" data-back="1">‹</button><div><p class="eyebrow">ENTREGA</p><h1>Onde vamos entregar?</h1><p>Preencha seus dados. Neste aparelho, podemos lembrar deles no próximo pedido.</p></div></div>
+      <form id="deliveryForm" class="form-card" novalidate>
+        <label>Nome *<input id="name" maxlength="100" autocomplete="name" placeholder="Seu nome completo" required></label>
+        <label>WhatsApp *<input id="whatsapp" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="(85) 99999-9999" required></label>
+        <label>Rua *<input id="street" maxlength="140" autocomplete="street-address" placeholder="Nome da sua rua" required></label>
+        <div class="grid-2"><label>Número *<input id="number" maxlength="30" placeholder="Ex.: 123" required></label><label>Bairro *<input id="neighborhood" maxlength="100" placeholder="Seu bairro" required></label></div>
+        <label>Complemento <span>(opcional)</span><input id="complement" maxlength="120" placeholder="Casa, apto, bloco…"></label>
+        <label>Referência <span>(opcional)</span><input id="reference" maxlength="160" placeholder="Ex.: próximo à praça"></label>
+        <div class="remember-note">ℹ️ Seus dados ficam vinculados a este navegador para facilitar o próximo pedido.</div>
+        <button class="primary full" type="submit">Continuar</button>
+      </form>
+    </section>
+
+    <section class="screen" data-screen="3">
+      <div class="section-heading"><button class="icon-btn" data-back="2">‹</button><div><p class="eyebrow">PAGAMENTO</p><h1>Quase lá!</h1><p>Escolha como deseja pagar e revise o pedido.</p></div></div>
+      <div class="payment-grid" id="paymentGrid">
+        <button class="pay-option selected" data-payment="pix"><span>◆</span><strong>PIX</strong><small>Pagamento via PIX</small></button>
+        <button class="pay-option" data-payment="dinheiro"><span>💵</span><strong>Dinheiro</strong><small>Na entrega</small></button>
+        <button class="pay-option" data-payment="cartao_entrega"><span>💳</span><strong>Cartão</strong><small>Na entrega</small></button>
+      </div>
+      <div id="changeBox" class="form-card compact hidden"><label>Troco para<input id="changeFor" inputmode="decimal" placeholder="Ex.: 50,00"></label></div>
+      <div class="review-card"><div class="review-head"><h2>Resumo do pedido</h2><button data-back="1" class="link-btn">Editar produtos</button></div><div id="reviewItems"></div><hr><div class="review-address"><strong>Entrega</strong><span id="reviewAddress"></span><button data-back="2" class="link-btn">Editar</button></div><div class="total-row"><span>Total</span><strong id="reviewTotal">R$ 0,00</strong></div></div>
+      <button id="placeOrder" class="primary full">Confirmar pedido</button>
+      <p class="small-note">Ao confirmar, o pedido será enviado ao depósito.</p>
+    </section>
+
+    <section class="screen" data-screen="4">
+      <div class="success-card"><div class="success-icon">✓</div><p class="eyebrow">CONFIRMAÇÃO</p><h1>Pedido recebido!</h1><p>Seu pedido já foi enviado para o depósito.</p><div class="order-number" id="orderNumber">Pedido #—</div></div>
+      <div class="order-summary"><div><span>Total</span><strong id="successTotal">R$ 0,00</strong></div><div><span>Pagamento</span><strong id="successPayment">—</strong></div><div><span>Cliente</span><strong id="successName">—</strong></div></div>
+      <div class="tracking-card"><h2>Acompanhe sua entrega</h2><p>O status é atualizado conforme o depósito atende o pedido.</p><div class="timeline" id="timeline"></div><div id="trackingUpdated" class="small-note"></div></div>
+      <button id="newOrder" class="secondary full">Fazer novo pedido</button>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
